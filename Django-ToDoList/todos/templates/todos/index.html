@@ -1,0 +1,41 @@
+{% extends 'todos/base.html' %}
+
+{% block content %}
+<div class="container mx-auto mt-10">
+    <!-- Title Row -->
+    <div class="text-center mb-5">
+        <h1 class="text-4xl font-bold text-gray-800">Todo List</h1>
+    </div>
+
+    <!-- Add a Todo Row -->
+    <div class="mb-5">
+        <form method="post" action="{% url 'todos:add' %}" class="flex justify-center">
+            {% csrf_token %}
+            <input type="text" class="form-control w-1/2 mr-2" name="title" placeholder="Do laundry" required>
+            <button type="submit" name="submit" class="btn btn-outline-primary">
+                Add
+            </button>
+        </form>
+    </div>
+
+    <hr class="my-5" />
+
+    <!-- Todo List Row -->
+    <div>
+        <div class="list-group">
+            {% for todo in todo_list %}
+            <div class="list-group-item flex justify-between items-center {% if todo.isCompleted %} bg-green-200 {% endif %}">
+                <form style="display: inline;" method="post" action="{% url 'todos:update' todo.id %}">
+                    {% csrf_token %}
+                    <input type="checkbox" name="isCompleted" onchange="this.form.submit()" {% if todo.isCompleted %} checked {% endif %} class="todo-status-checkbox cursor-pointer mr -2" title="{% if not todo.isCompleted %} mark as done {% else %} mark undone {% endif %}">
+                </form>
+                <span class="flex-1 ml-2 text-gray-800 {% if todo.isCompleted %} line-through {% endif %}">{{ todo.title }}</span>
+                <a href="{% url 'todos:delete' todo.id %}" title="Delete" class="text-red-500 hover:text-red-700">
+                    <i class="far fa-trash-alt"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
